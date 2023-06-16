@@ -22,12 +22,11 @@ and Wi-Fi module. <br />
 microcontroller and peripherals will be powered by exactly 5V through a voltage
 regulator circuit Lm2596 with 5V and 3A output. As for the power supply for the dc
 motor and driver, it will be supplied directly with the 18650 lipo battery. <br />
-```php
+
 In the user application system, the data from the robot will be fetched through
-firebase and displayed to the user, the system is written in pyqt5, a GUI library for
-IoT applications. Any computer used with an internet connection can run the
-application.
-```
+<span style="color: orange;">Firebase real-time database</span> and displayed to the user, the system is written in <span style="color: blue;">PyQt5</span>, a GUI library for
+<span style="color: blue;">IoT application</span>. Any computer used with an <span style="color: red;">internet</span> connection can run the
+application. 
 
 ### 3. FIREBASE DATABASE DESIGN
 The structure of the data storing on firebase are constructed similar to a structure of a Json file.
