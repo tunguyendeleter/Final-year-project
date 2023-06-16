@@ -45,8 +45,8 @@ The structure of the data storing on firebase are constructed similar to a struc
 }
 ```
 ### 4. USER APPLICATION INTERFACE
-The system shows information such as temperature and humidity, heading angle, GPS coordinates, GPS map, also illustrate statistically data from database.
-!["project"](app_interface.png)  <br />
+The system shows information such as temperature and humidity, heading angle, GPS coordinates, GPS map, also illustrate statistically data from database. <br />
+!["project"](app_interface.png) <br />
 | ![Image 1](page1.png) | ![Image 2](page2.png) | ![Image 3](page2.png) |
 | :-------------: | :-------------: | :-------------: |
 | ![Image 4](page4.png) | ![Image 5](page5.png) | ![Image 6](page6.png) |
