@@ -50,5 +50,6 @@ The system shows information such as temperature and humidity, heading angle, GP
 | ![Image 1](page1.png) | ![Image 2](page2.png) | ![Image 3](page2.png) |
 | :-------------: | :-------------: | :-------------: |
 | ![Image 4](page4.png) | ![Image 5](page5.png) | ![Image 6](page6.png) |
-The figure shows the interactive features of the application such as button, checkboxes line edit. There are 5 page, each page will have different tasks and features.
-!["project"](page_structure.png)  <br />
+
+The figure shows the interactive features of the application such as button, checkboxes line edit. There are 5 page, each page will have different tasks and features. <br />
+!["project"](page_structure.png) 
