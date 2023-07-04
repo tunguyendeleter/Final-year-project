@@ -25,7 +25,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_4562f83b816bec4977f7690458cf1773 {
+                #map_18eba9d380fc42bcc48ad6c77c1fb9b0 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -39,16 +39,16 @@
 <body>
     
     
-            <div class="folium-map" id="map_4562f83b816bec4977f7690458cf1773" ></div>
+            <div class="folium-map" id="map_18eba9d380fc42bcc48ad6c77c1fb9b0" ></div>
         
 </body>
 <script>
     
     
-            var map_4562f83b816bec4977f7690458cf1773 = L.map(
-                "map_4562f83b816bec4977f7690458cf1773",
+            var map_18eba9d380fc42bcc48ad6c77c1fb9b0 = L.map(
+                "map_18eba9d380fc42bcc48ad6c77c1fb9b0",
                 {
-                    center: [10.854938533625115, 106.7645788192749],
+                    center: [10.850823092555995, 106.76999151706696],
                     crs: L.CRS.EPSG3857,
                     zoom: 9,
                     zoomControl: true,
@@ -60,17 +60,17 @@
 
         
     
-            var tile_layer_b4ee8946a87704c1e44aae2bd2a97aac = L.tileLayer(
+            var tile_layer_d10882f9b64011f6015b17e8503e18e7 = L.tileLayer(
                 "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {"attribution": "Data by \u0026copy; \u003ca target=\"_blank\" href=\"http://openstreetmap.org\"\u003eOpenStreetMap\u003c/a\u003e, under \u003ca target=\"_blank\" href=\"http://www.openstreetmap.org/copyright\"\u003eODbL\u003c/a\u003e.", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
-            ).addTo(map_4562f83b816bec4977f7690458cf1773);
+            ).addTo(map_18eba9d380fc42bcc48ad6c77c1fb9b0);
         
     
-                var lat_lng_popup_62e73282e8e2d9107cf1d88faaa13df6 = L.popup();
+                var lat_lng_popup_e19df1378acd442c269a529562eaae3b = L.popup();
                 
             // custom code
             function latLngPop(e) {
-                lat_lng_popup_62e73282e8e2d9107cf1d88faaa13df6
+                lat_lng_popup_e19df1378acd442c269a529562eaae3b
                     .setLatLng(e.latlng)
                     .setContent(`
                         lat: ${e.latlng.lat}, lng: ${e.latlng.lng}
@@ -90,7 +90,7 @@
                             L.marker(
                                 [${e.latlng.lat}, ${e.latlng.lng}],
                                 {}
-                            ).addTo(map_4562f83b816bec4977f7690458cf1773);
+                            ).addTo(map_18eba9d380fc42bcc48ad6c77c1fb9b0);
                         "> Store Coordinate </button>
                         <button onClick="
                             fetch('http://localhost:3001', {
@@ -104,11 +104,11 @@
                             });
                         "> Quit </button>
                     `)
-                    .openOn(map_4562f83b816bec4977f7690458cf1773);
+                    .openOn(map_18eba9d380fc42bcc48ad6c77c1fb9b0);
             }
             // end custom code
     
-                map_4562f83b816bec4977f7690458cf1773.on('click', latLngPop);
+                map_18eba9d380fc42bcc48ad6c77c1fb9b0.on('click', latLngPop);
             
 </script>
 </html>
