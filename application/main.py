@@ -254,6 +254,18 @@ class dataCollection:
         conn.commit()
         conn.close()
         return rows
+    
+    def search_database_area(self, timeStart, timeEnd, area):
+        conn = sqlite3.connect(self.pathdb + "\\" + self.db + ".db")
+        c = conn.cursor()
+        c.execute(
+            "SELECT * FROM " + self.db + " WHERE Time BETWEEN ? AND ? AND Area = ?",
+            (timeStart, timeEnd, area),
+        )
+        rows = c.fetchall()
+        conn.commit()
+        conn.close()
+        return rows
 
     def export_CSV(self):
         conn = sqlite3.connect(self.pathdb + "\\" + self.db + ".db")
@@ -387,12 +399,19 @@ class MainWindow(QMainWindow):
         self.location = {}
         self.webView = QWebEngineView()
         self.webView.setHtml(self.data.getvalue().decode())
+        file_path = os.path.join(os.path.dirname(__file__), "setting.json")
+        settings = json.load(open(file_path, "r"))
+        self.pathdb = settings["pathdb"]
+        self.pathcsv = settings["pathcsv"]
+        self.database = settings["dbname"]
+        self.ui.textEdit_4.setPlainText(self.database)
+        self.ui.textEdit_5.setPlainText(self.pathdb)
+        self.ui.textEdit_6.setPlainText(self.pathcsv)
         self.timer = QtCore.QTimer()
         self.timer2 = QtCore.QTimer()
         self.gps_timer = QTimer()
         self.log_timer = QTimer()
         self.live_timer = QTimer()
-        self.read_setting()
         self.x1 = 30 * [0]
         self.x2 = 30 * [0]
         self.y1 = [0] * 30
@@ -411,6 +430,7 @@ class MainWindow(QMainWindow):
         self.ui.verticalLayout_20.addWidget(self.sc3)
         self.ui.verticalLayout_21.addWidget(self.sc4)
         db.child("CAR").update({"ENABLE": "OFF"})
+        db.update({"STATUS": "MOVING"})
         
         self.ui.verticalLayout_6.addWidget(self.webView)
         # PAGE 1
@@ -423,7 +443,9 @@ class MainWindow(QMainWindow):
         self.ui.PRODUCT_button.clicked.connect(self.set_page4)
         # PAGE 5
         self.ui.SETTING_button.clicked.connect(self.set_page5)
-        # self.ui.pushButton_12.clicked.connect(self.enable_log)
+        
+        self.ui.checkBox_3.stateChanged.connect(self.draw_line)
+
         self.ui.checkBox.stateChanged.connect(self.enable_log)
         # SETTING EXITBUTTOM
         self.ui.exit_button.clicked.connect(self.closeEvent)
@@ -628,14 +650,46 @@ class MainWindow(QMainWindow):
             html_content = self.m.get_root().render()
             self.data.seek(0)
             self.data.truncate()
-            if self.ui.checkBox.isChecked() == False:
+            if self.ui.checkBox.isChecked() == False and self.ui.checkBox_3.isChecked() == False:
                 self.data.write(html_content.encode())
                 self.webView.setHtml(self.data.getvalue().decode())
                 if current_widget == "page_1":
                     self.ui.verticalLayout_6.addWidget(self.webView)
                 else:
                     self.ui.horizontalLayout_9.addWidget(self.webView)
-                
+
+    def draw_line(self):
+        if self.ui.checkBox_3.isChecked():
+            file_path = os.path.join(os.path.dirname(__file__), "gps_log_coordinates.json")
+            try:
+                with open(file_path, "r") as infile:
+                    data = json.load(infile)
+                    if data != []: 
+                        list_of_lists = [[d[key] for key in d if not isinstance(d[key], str)] for d in data]
+                        self.m = folium.Map(
+                            location=[data[0]["latitude"], data[0]["longitude"]],
+                            zoom_start=15,
+                        )
+                        folium.PolyLine(locations=list_of_lists, color='blue').add_to(self.m)
+            
+                file_path = os.path.join(os.path.dirname(__file__), "coordinates.json")
+                locations = json.load(open(file_path, "r"))
+                if locations != []:
+                    for location in locations:
+                        marker = folium.Marker(
+                            location=[location["latitude"], location["longitude"]],
+                            icon=folium.Icon(color="red"),
+                            popup="CAR POSITION",
+                        )
+                        marker.add_to(self.m)
+                self.data.truncate(0)
+                self.data.seek(0)
+                self.m.save(self.data, close_file=False)
+                self.webView.setHtml(self.data.getvalue().decode())
+                self.ui.horizontalLayout_9.addWidget(self.webView)
+            except Exception as e:
+                print(e)
+
     def enable_log(self):
         '''
         toggle checkbox to show both coordinates of car and coordinates of waypoints
@@ -709,6 +763,9 @@ class MainWindow(QMainWindow):
         '''
         lat = db.child("GPS").child("Latitude").get().val()
         long = db.child("GPS").child("Longitude").get().val()
+        if lat == 0 and long == 0:
+            return
+
         file_path = os.path.join(os.path.dirname(__file__), "gps_log_coordinates.json")
 
         try:
@@ -976,7 +1033,11 @@ class MainWindow(QMainWindow):
         global search_time
         try:
             obj = dataCollection(self.pathdb, self.pathcsv, self.database)
-            rows = obj.search_database(search_time[0:19], search_time[19:39])
+            area = self.ui.textEdit_28.toPlainText()
+            if area != "":
+                rows = obj.search_database_area(search_time[0:19], search_time[19:39], area)
+            else:
+                rows = obj.search_database(search_time[0:19], search_time[19:39])
             arr_x = []
             arr_y = []
             cnt = 0
@@ -1072,9 +1133,14 @@ class MainWindow(QMainWindow):
             + str(second)
         )
         search_time = starttime + endtime
+        area = self.ui.textEdit_28.toPlainText()
+        if area != "":
+            rows = obj.search_database_area(starttime, endtime, area)
+        else:
+            rows = obj.search_database(starttime, endtime)
+    
         while self.ui.tableWidget.rowCount() > 0:
             self.ui.tableWidget.removeRow(0)
-        rows = obj.search_database(starttime, endtime)
         no_row = 0
         self.ui.tableWidget.setRowCount(len(rows))
         for row in rows:
@@ -1104,6 +1170,8 @@ class MainWindow(QMainWindow):
         if db.child("CAR").child("ENABLE").get().val() == "OFF":
             file_path = os.path.join(os.path.dirname(__file__), "coordinates.json")
             locations = json.load(open(file_path, "r"))
+            if len(locations) == 0:
+                return
             self.count = 0
             db.child("CAR").update({"Latitude": str(locations[self.count]["latitude"])})
             db.child("CAR").update({"Longitude": str(locations[self.count]["longitude"])})
